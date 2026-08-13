@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', () => {
   // --- DOM Elements ---
   const loginStage = document.getElementById('loginStage');
