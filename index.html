@@ -3,139 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dayline — a planner that feels handwritten</title>
-  
-  <!-- External Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  
-  <!-- Stylesheet Link -->
-  <link rel="stylesheet" href="styles.css">
-  
-  <!-- JavaScript Link -->
-  <script src="app.js" defer></script>
+  <title>Minimal Planner</title>
+  <style>
+    :root { --bg: #f8f9fa; --card: #ffffff; --text: #212529; --accent: #2b3a55; }
+    body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 40px 16px; margin: 0; }
+    .card { background: var(--card); padding: 24px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); width: 100%; max-width: 380px; }
+    h2 { margin: 0 0 16px; font-size: 1.25rem; }
+    .add-row { display: flex; gap: 8px; margin-bottom: 16px; }
+    input { flex: 1; padding: 10px 12px; border: 1px solid #dde1e5; border-radius: 6px; font-size: 0.95rem; outline: none; }
+    input:focus { border-color: var(--accent); }
+    button.add-btn { background: var(--accent); color: #fff; border: none; padding: 10px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; }
+    ul { list-style: none; padding: 0; margin: 0; }
+    li { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f3f5; }
+    li span { cursor: pointer; flex: 1; user-select: none; }
+    li.done span { text-decoration: line-through; color: #adb5bd; }
+    .del { background: none; border: none; color: #e63946; font-size: 1.1rem; cursor: pointer; padding: 0 4px; }
+  </style>
 </head>
 <body>
 
-  <!-- LOGIN / SIGNUP STAGE -->
-  <div class="stage" id="loginStage">
-    <div class="cover">
-      <div class="rings">
-        <div class="ring"></div><div class="ring"></div><div class="ring"></div>
-        <div class="ring"></div><div class="ring"></div>
-      </div>
-      <div class="cover-title">Dayline</div>
-      <p class="cover-sub" id="coverSub">A little notebook for your to-dos.</p>
-
-      <!-- LOGIN VIEW -->
-      <div id="loginView">
-        <div class="field">
-          <label for="loginUsername">Username</label>
-          <div class="field-input-row">
-            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21c0-3.9-3.6-7-8-7s-8 3.1-8 7"/><circle cx="12" cy="7" r="4"/>
-            </svg>
-            <input id="loginUsername" type="text" placeholder="e.g. unish" autocomplete="username">
-          </div>
-        </div>
-
-        <div class="cover-actions">
-          <button class="btn btn-primary" id="loginBtn" style="flex:1;">Open notebook</button>
-        </div>
-        <p class="switch-link">New here? <button type="button" id="toSignup">Create an account</button></p>
-      </div>
-
-      <!-- SIGNUP VIEW -->
-      <div id="signupView" class="hidden">
-        <div class="field">
-          <label for="fullName">Full name</label>
-          <div class="field-input-row">
-            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21c0-3.9-3.6-7-8-7s-8 3.1-8 7"/><circle cx="12" cy="7" r="4"/>
-            </svg>
-            <input id="fullName" type="text" placeholder="e.g. Unish Niraula" autocomplete="name">
-          </div>
-        </div>
-        <div class="field">
-          <label for="email">Email</label>
-          <div class="field-input-row">
-            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2.5" y="4.5" width="19" height="15" rx="2.2"/><path d="m3 6 9 7 9-7"/>
-            </svg>
-            <input id="email" type="email" placeholder="you@example.com" autocomplete="email">
-          </div>
-        </div>
-        <div class="field">
-          <label for="username">Username</label>
-          <div class="field-input-row">
-            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
-            </svg>
-            <input id="username" type="text" placeholder="pick a username" autocomplete="username">
-          </div>
-        </div>
-        <div class="field">
-          <label for="password">Password</label>
-          <div class="field-input-row">
-            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/>
-            </svg>
-            <input id="password" type="password" placeholder="at least 4 characters" autocomplete="new-password">
-          </div>
-        </div>
-        <div class="field">
-          <label for="confirmPassword">Confirm password</label>
-          <div class="field-input-row">
-            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/>
-            </svg>
-            <input id="confirmPassword" type="password" placeholder="type it again" autocomplete="new-password">
-          </div>
-        </div>
-
-        <div class="cover-actions">
-          <button class="btn btn-primary" id="signupBtn" style="flex:1;">Create account</button>
-        </div>
-        <p class="switch-link">Already have an account? <button type="button" id="toLogin">Log in</button></p>
-      </div>
-
-      <div class="cover-error" id="authError"></div>
-      <p class="cover-note">Demo account system: your details and tasks are saved to browser storage for this app.</p>
+  <div class="card">
+    <h2>Today’s Tasks</h2>
+    <div class="add-row">
+      <input id="input" type="text" placeholder="Add a task..." />
+      <button class="add-btn" id="addBtn">Add</button>
     </div>
+    <ul id="list"></ul>
   </div>
 
-  <!-- NOTEBOOK APP STAGE -->
-  <div class="stage hidden" id="appStage">
-    <div class="book">
-      <div class="app-header">
-        <div>
-          <div class="greeting" id="greeting">Hey there —</div>
-          <div class="date-stamp" id="dateStamp"></div>
-        </div>
-        <button class="logout" id="logoutBtn">Log out</button>
-      </div>
+  <script>
+    const input = document.getElementById('input'), addBtn = document.getElementById('addBtn'), list = document.getElementById('list');
+    let tasks = JSON.parse(localStorage.getItem('quick_tasks')) || [];
 
-      <div class="add-row">
-        <input id="taskInput" type="text" placeholder="Write the next thing to do…" maxlength="140">
-        <button class="add-btn" id="addBtn" aria-label="Add task">+</button>
-      </div>
+    function render() {
+      list.innerHTML = tasks.map((t, i) => `
+        <li class="${t.done ? 'done' : ''}">
+          <span onclick="toggle(${i})">${escape(t.text)}</span>
+          <button class="del" onclick="remove(${i})">✕</button>
+        </li>
+      `).join('');
+      localStorage.setItem('quick_tasks', JSON.stringify(tasks));
+    }
 
-      <div class="filters">
-        <button class="filter-tab active" data-filter="all">All</button>
-        <button class="filter-tab" data-filter="active">Open</button>
-        <button class="filter-tab" data-filter="done">Done</button>
-      </div>
+    addBtn.onclick = () => {
+      if (input.value.trim()) {
+        tasks.unshift({ text: input.value.trim(), done: false });
+        input.value = '';
+        render();
+      }
+    };
 
-      <ul class="task-list" id="taskList"></ul>
-      <div class="empty-state hidden" id="emptyState">Nothing here yet. Add your first task above.</div>
+    input.onkeydown = (e) => e.key === 'Enter' && addBtn.click();
+    window.toggle = (i) => { tasks[i].done = !tasks[i].done; render(); };
+    window.remove = (i) => { tasks.splice(i, 1); render(); };
+    function escape(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-      <div class="footer-note">
-        <span id="footerCount">0 tasks</span>
-        <span class="badge" id="footerBadge">0 done</span>
-      </div>
-    </div>
-  </div>
-
+    render();
+  </script>
 </body>
 </html>
