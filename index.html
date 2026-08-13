@@ -1,112 +1,165 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dayline — a planner that feels handwritten</title>
+  <title>Dayline — Personal Planner</title>
   
-  <!-- External Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   
-  <!-- Stylesheet Link -->
-  <link rel="stylesheet" href="styles.css">
-  
-  <!-- JavaScript Link -->
-  <script src="app.js" defer></script>
+  <style>
+    :root {
+      --paper: #F6F0E2;
+      --paper-edge: #ECE3D0;
+      --ink: #2B3A55;
+      --ink-soft: #55617A;
+      --margin-red: #B5493C;
+      --highlight: #E7B84B;
+      --highlight-soft: #F3DFA6;
+      --done-green: #5C7A5C;
+      --paper-line: rgba(43, 58, 85, 0.09);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0; padding: 0; min-height: 100vh;
+      background: #DED2B4;
+      font-family: 'Work Sans', sans-serif;
+      color: var(--ink);
+    }
+
+    button, input { font-family: inherit; }
+    button { cursor: pointer; }
+
+    .stage {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+    }
+
+    .hidden { display: none !important; }
+
+    /* Auth Cover */
+    .cover {
+      width: 100%; max-width: 400px;
+      background: linear-gradient(180deg, #2B3A55, #22304A);
+      border-radius: 10px; padding: 40px 30px;
+      position: relative;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    .cover-title { font-family: 'Kalam', cursive; font-size: 2rem; color: #F6F0E2; margin: 0 0 4px; }
+    .cover-sub { color: #B9C2D6; font-size: 0.88rem; margin: 0 0 24px; }
+
+    .field { margin-bottom: 14px; }
+    .field label { display: block; color: #8FA0C2; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 4px; }
+    .field input {
+      width: 100%; background: transparent; border: none;
+      border-bottom: 1.5px solid rgba(246, 240, 226, 0.3);
+      color: #F6F0E2; font-size: 0.95rem; padding: 6px 0;
+    }
+    .field input:focus { outline: none; border-bottom-color: var(--highlight); }
+
+    .btn {
+      width: 100%; border: none; border-radius: 6px; padding: 12px;
+      font-weight: 600; background: var(--highlight); color: #2B3A55;
+      margin-top: 10px;
+    }
+
+    .switch-link { text-align: center; font-size: 0.82rem; color: #8FA0C2; margin-top: 14px; }
+    .switch-link button { background: none; border: none; color: var(--highlight); text-decoration: underline; }
+
+    .cover-error { color: #E38F84; font-size: 0.82rem; margin-top: 10px; min-height: 1.2em; }
+
+    /* Notebook App */
+    .book {
+      width: 100%; max-width: 600px; background: var(--paper);
+      border-radius: 8px; padding: 36px 30px 30px 50px;
+      position: relative;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+
+    .app-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
+    .greeting { font-family: 'Kalam', cursive; font-size: 1.8rem; font-weight: 700; }
+    .date-stamp { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--ink-soft); }
+    .logout { background: none; border: none; color: var(--ink-soft); text-decoration: underline; }
+
+    .add-row { display: flex; gap: 10px; margin-bottom: 20px; }
+    .add-row input {
+      flex: 1; border: none; border-bottom: 1.5px solid rgba(43, 58, 85, 0.3);
+      background: transparent; font-family: 'Kalam', cursive; font-size: 1.1rem;
+    }
+    .add-row input:focus { outline: none; border-bottom-color: var(--ink); }
+    .add-btn { background: var(--ink); color: #fff; border: none; width: 36px; height: 36px; border-radius: 50%; }
+
+    .filters { display: flex; gap: 8px; margin-bottom: 16px; }
+    .filter-tab { background: var(--highlight-soft); border: none; padding: 4px 10px; font-size: 0.78rem; border-radius: 3px; }
+    .filter-tab.active { font-weight: bold; background: var(--highlight); }
+
+    .task-list { list-style: none; padding: 0; margin: 0; }
+    .task { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
+    .task.done .task-text { text-decoration: line-through; color: var(--ink-soft); }
+    .task-text { flex: 1; font-family: 'Kalam', cursive; font-size: 1.05rem; }
+    .delete-btn { background: none; border: none; color: var(--margin-red); }
+
+    .empty-state { font-family: 'Kalam', cursive; color: var(--ink-soft); margin-top: 10px; }
+    .footer-note { display: flex; justify-content: space-between; margin-top: 20px; font-size: 0.75rem; color: var(--ink-soft); }
+  </style>
 </head>
 <body>
 
-  <!-- LOGIN / SIGNUP STAGE -->
+  <!-- AUTH STAGE -->
   <div class="stage" id="loginStage">
     <div class="cover">
-      <div class="rings">
-        <div class="ring"></div><div class="ring"></div><div class="ring"></div>
-        <div class="ring"></div><div class="ring"></div>
-      </div>
       <div class="cover-title">Dayline</div>
-      <p class="cover-sub" id="coverSub">A little notebook for your to-dos.</p>
+      <p class="cover-sub">Personal Planner</p>
 
       <!-- LOGIN VIEW -->
       <div id="loginView">
         <div class="field">
           <label for="loginUsername">Username</label>
-          <div class="field-input-row">
-            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21c0-3.9-3.6-7-8-7s-8 3.1-8 7"/><circle cx="12" cy="7" r="4"/>
-            </svg>
-            <input id="loginUsername" type="text" placeholder="e.g. unish" autocomplete="username">
-          </div>
+          <input id="loginUsername" type="text" placeholder="e.g. alex">
         </div>
-
-        <div class="cover-actions">
-          <button class="btn btn-primary" id="loginBtn" style="flex:1;">Open notebook</button>
-        </div>
-        <p class="switch-link">New here? <button type="button" id="toSignup">Create an account</button></p>
+        <button class="btn" id="loginBtn">Open notebook</button>
+        <p class="switch-link">New here? <button type="button" id="toSignup">Create account</button></p>
       </div>
 
       <!-- SIGNUP VIEW -->
       <div id="signupView" class="hidden">
         <div class="field">
-          <label for="fullName">Full name</label>
-          <div class="field-input-row">
-            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21c0-3.9-3.6-7-8-7s-8 3.1-8 7"/><circle cx="12" cy="7" r="4"/>
-            </svg>
-            <input id="fullName" type="text" placeholder="e.g. Unish Niraula" autocomplete="name">
-          </div>
+          <label for="fullName">Full Name</label>
+          <input id="fullName" type="text" placeholder="Alex Morgan">
         </div>
         <div class="field">
           <label for="email">Email</label>
-          <div class="field-input-row">
-            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2.5" y="4.5" width="19" height="15" rx="2.2"/><path d="m3 6 9 7 9-7"/>
-            </svg>
-            <input id="email" type="email" placeholder="you@example.com" autocomplete="email">
-          </div>
+          <input id="email" type="email" placeholder="alex@example.com">
         </div>
         <div class="field">
           <label for="username">Username</label>
-          <div class="field-input-row">
-            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
-            </svg>
-            <input id="username" type="text" placeholder="pick a username" autocomplete="username">
-          </div>
+          <input id="username" type="text" placeholder="alex123">
         </div>
         <div class="field">
           <label for="password">Password</label>
-          <div class="field-input-row">
-            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/>
-            </svg>
-            <input id="password" type="password" placeholder="at least 4 characters" autocomplete="new-password">
-          </div>
+          <input id="password" type="password" placeholder="••••••••">
         </div>
         <div class="field">
-          <label for="confirmPassword">Confirm password</label>
-          <div class="field-input-row">
-            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/>
-            </svg>
-            <input id="confirmPassword" type="password" placeholder="type it again" autocomplete="new-password">
-          </div>
+          <label for="confirmPassword">Confirm Password</label>
+          <input id="confirmPassword" type="password" placeholder="••••••••">
         </div>
-
-        <div class="cover-actions">
-          <button class="btn btn-primary" id="signupBtn" style="flex:1;">Create account</button>
-        </div>
-        <p class="switch-link">Already have an account? <button type="button" id="toLogin">Log in</button></p>
+        <button class="btn" id="signupBtn">Create account</button>
+        <p class="switch-link">Already registered? <button type="button" id="toLogin">Log in</button></p>
       </div>
 
       <div class="cover-error" id="authError"></div>
-      <p class="cover-note">Demo account system: your details and tasks are saved to browser storage for this app.</p>
     </div>
   </div>
 
-  <!-- NOTEBOOK APP STAGE -->
+  <!-- APP STAGE -->
   <div class="stage hidden" id="appStage">
     <div class="book">
       <div class="app-header">
@@ -118,8 +171,8 @@
       </div>
 
       <div class="add-row">
-        <input id="taskInput" type="text" placeholder="Write the next thing to do…" maxlength="140">
-        <button class="add-btn" id="addBtn" aria-label="Add task">+</button>
+        <input id="taskInput" type="text" placeholder="Write a task…">
+        <button class="add-btn" id="addBtn">+</button>
       </div>
 
       <div class="filters">
@@ -129,14 +182,226 @@
       </div>
 
       <ul class="task-list" id="taskList"></ul>
-      <div class="empty-state hidden" id="emptyState">Nothing here yet. Add your first task above.</div>
+      <div class="empty-state hidden" id="emptyState">No tasks yet.</div>
 
       <div class="footer-note">
         <span id="footerCount">0 tasks</span>
-        <span class="badge" id="footerBadge">0 done</span>
+        <span id="footerBadge">0 done</span>
       </div>
     </div>
   </div>
 
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const loginStage = document.getElementById('loginStage');
+      const appStage = document.getElementById('appStage');
+      const loginView = document.getElementById('loginView');
+      const signupView = document.getElementById('signupView');
+      const toSignup = document.getElementById('toSignup');
+      const toLogin = document.getElementById('toLogin');
+      
+      const loginUsernameInput = document.getElementById('loginUsername');
+      const loginBtn = document.getElementById('loginBtn');
+      
+      const fullNameInput = document.getElementById('fullName');
+      const emailInput = document.getElementById('email');
+      const signupUsernameInput = document.getElementById('username');
+      const passwordInput = document.getElementById('password');
+      const confirmPasswordInput = document.getElementById('confirmPassword');
+      const signupBtn = document.getElementById('signupBtn');
+      const authError = document.getElementById('authError');
+      
+      const greeting = document.getElementById('greeting');
+      const dateStamp = document.getElementById('dateStamp');
+      const logoutBtn = document.getElementById('logoutBtn');
+      
+      const taskInput = document.getElementById('taskInput');
+      const addBtn = document.getElementById('addBtn');
+      const taskList = document.getElementById('taskList');
+      const emptyState = document.getElementById('emptyState');
+      const filterTabs = document.querySelectorAll('.filter-tab');
+      const footerCount = document.getElementById('footerCount');
+      const footerBadge = document.getElementById('footerBadge');
+
+      let currentUser = JSON.parse(localStorage.getItem('dayline_session')) || null;
+      let tasks = [];
+      let currentFilter = 'all';
+
+      function init() {
+        setDateStamp();
+        if (currentUser) {
+          showApp();
+        } else {
+          showAuth();
+        }
+      }
+
+      function setDateStamp() {
+        const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+        dateStamp.textContent = new Date().toLocaleDateString('en-US', options).toUpperCase();
+      }
+
+      toSignup.addEventListener('click', () => {
+        loginView.classList.add('hidden');
+        signupView.classList.remove('hidden');
+        authError.textContent = '';
+      });
+
+      toLogin.addEventListener('click', () => {
+        signupView.classList.add('hidden');
+        loginView.classList.remove('hidden');
+        authError.textContent = '';
+      });
+
+      loginBtn.addEventListener('click', handleLogin);
+      loginUsernameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleLogin(); });
+
+      function handleLogin() {
+        const username = loginUsernameInput.value.trim();
+        if (!username) return showError('Please enter a username.');
+
+        const users = JSON.parse(localStorage.getItem('dayline_users')) || {};
+        if (users[username.toLowerCase()]) {
+          currentUser = users[username.toLowerCase()];
+        } else {
+          currentUser = { username: username, name: username };
+          users[username.toLowerCase()] = currentUser;
+          localStorage.setItem('dayline_users', JSON.stringify(users));
+        }
+
+        localStorage.setItem('dayline_session', JSON.stringify(currentUser));
+        showApp();
+      }
+
+      signupBtn.addEventListener('click', () => {
+        const name = fullNameInput ? fullNameInput.value.trim() : '';
+        const email = emailInput ? emailInput.value.trim() : '';
+        const username = signupUsernameInput ? signupUsernameInput.value.trim() : '';
+        const pass = passwordInput ? passwordInput.value : '';
+        const confirmPass = confirmPasswordInput ? confirmPasswordInput.value : '';
+
+        if (!name || !username) return showError('Please fill out all required fields.');
+        if (pass && pass.length < 4) return showError('Password must be at least 4 characters.');
+        if (pass && pass !== confirmPass) return showError('Passwords do not match.');
+
+        const users = JSON.parse(localStorage.getItem('dayline_users')) || {};
+        if (users[username.toLowerCase()]) return showError('Username is taken.');
+
+        currentUser = { username, name, email };
+        users[username.toLowerCase()] = currentUser;
+        localStorage.setItem('dayline_users', JSON.stringify(users));
+        localStorage.setItem('dayline_session', JSON.stringify(currentUser));
+
+        showApp();
+      });
+
+      logoutBtn.addEventListener('click', () => {
+        currentUser = null;
+        localStorage.removeItem('dayline_session');
+        showAuth();
+      });
+
+      function showError(msg) { authError.textContent = msg; }
+
+      function showAuth() {
+        loginStage.classList.remove('hidden');
+        appStage.classList.add('hidden');
+        authError.textContent = '';
+      }
+
+      function showApp() {
+        loginStage.classList.add('hidden');
+        appStage.classList.remove('hidden');
+        greeting.textContent = `Hey, ${currentUser.name.split(' ')[0]} —`;
+        loadTasks();
+        renderTasks();
+      }
+
+      function getStorageKey() {
+        return `dayline_tasks_${currentUser.username.toLowerCase()}`;
+      }
+
+      function loadTasks() {
+        tasks = JSON.parse(localStorage.getItem(getStorageKey())) || [];
+      }
+
+      function saveTasks() {
+        localStorage.setItem(getStorageKey(), JSON.stringify(tasks));
+      }
+
+      addBtn.addEventListener('click', addTask);
+      taskInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addTask(); });
+
+      function addTask() {
+        const text = taskInput.value.trim();
+        if (!text) return;
+
+        tasks.unshift({ id: Date.now().toString(), text, done: false });
+        saveTasks();
+        taskInput.value = '';
+        renderTasks();
+      }
+
+      filterTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          filterTabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          currentFilter = tab.dataset.filter;
+          renderTasks();
+        });
+      });
+
+      function renderTasks() {
+        taskList.innerHTML = '';
+
+        const filtered = tasks.filter(t => {
+          if (currentFilter === 'active') return !t.done;
+          if (currentFilter === 'done') return t.done;
+          return true;
+        });
+
+        emptyState.classList.toggle('hidden', filtered.length > 0);
+
+        filtered.forEach(task => {
+          const li = document.createElement('li');
+          li.className = `task ${task.done ? 'done' : ''}`;
+          li.innerHTML = `
+            <input type="checkbox" ${task.done ? 'checked' : ''}>
+            <span class="task-text">${escapeHtml(task.text)}</span>
+            <button class="delete-btn">✕</button>
+          `;
+
+          li.querySelector('input[type="checkbox"]').addEventListener('change', () => {
+            task.done = !task.done;
+            saveTasks();
+            renderTasks();
+          });
+
+          li.querySelector('.delete-btn').addEventListener('click', () => {
+            tasks = tasks.filter(t => t.id !== task.id);
+            saveTasks();
+            renderTasks();
+          });
+
+          taskList.appendChild(li);
+        });
+
+        updateFooter();
+      }
+
+      function updateFooter() {
+        const total = tasks.length;
+        const completed = tasks.filter(t => t.done).length;
+        footerCount.textContent = `${total} ${total === 1 ? 'task' : 'tasks'}`;
+        footerBadge.textContent = `${completed} done`;
+      }
+
+      function escapeHtml(str) {
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      }
+
+      init();
+    });
+  </script>
 </body>
 </html>
