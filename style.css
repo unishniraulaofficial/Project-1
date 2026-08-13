@@ -125,21 +125,18 @@ button:focus-visible, input:focus-visible, .checkbox:focus-visible {
 }
 
 .field-input-row:focus-within .field-icon { color: var(--highlight); }
-.field-input-row input { border-bottom: none !important; }
 
 .field input {
   width: 100%;
-  background: rgba(246,240,226,0.06);
+  background: transparent;
   border: none;
-  border-bottom: 1.5px solid rgba(246,240,226,0.3);
   color: #F6F0E2;
   font-size: 1rem;
   padding: 8px 2px;
-  transition: border-color 0.2s ease;
 }
 
 .field input::placeholder { color: #5C6C8C; }
-.field input:focus { border-bottom-color: var(--highlight); outline: none; }
+.field input:focus { outline: none; }
 
 .cover-actions { display: flex; gap: 10px; margin-top: 26px; }
 
@@ -160,14 +157,6 @@ button:focus-visible, input:focus-visible, .checkbox:focus-visible {
 }
 
 .btn-primary:hover { box-shadow: 0 6px 16px -4px rgba(231,184,75,0.5); }
-
-.btn-ghost {
-  background: transparent;
-  color: #B9C2D6;
-  border: 1px solid rgba(246,240,226,0.25);
-}
-
-.btn-ghost:hover { border-color: var(--highlight); color: var(--highlight); }
 
 .cover-error {
   color: #E38F84;
@@ -396,19 +385,6 @@ button:focus-visible, input:focus-visible, .checkbox:focus-visible {
 .task.done .task-text { color: rgba(43,58,85,0.4); }
 .task.done .task-text .strike { width: 100%; }
 
-.task-edit-input {
-  flex: 1;
-  font-family: 'Kalam', cursive;
-  font-size: 1.08rem;
-  color: var(--ink);
-  background: rgba(231,184,75,0.15);
-  border: none;
-  border-bottom: 1.5px dashed var(--ink-soft);
-  padding: 0 2px 2px;
-}
-
-.task-edit-input:focus { outline: none; }
-
 .task-actions {
   display: flex; gap: 4px;
   opacity: 0;
@@ -457,4 +433,3 @@ button:focus-visible, input:focus-visible, .checkbox:focus-visible {
   .book { padding: 34px 20px 26px 46px; }
   .greeting { font-size: 1.55rem; }
 }
-
